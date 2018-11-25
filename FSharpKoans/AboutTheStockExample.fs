@@ -27,6 +27,7 @@ open FSharpKoans.Core
 //---------------------------------------------------------------
 [<Koan(Sort = 15)>]
 module ``about the stock example`` =
+    open System.Globalization
     
     let stockData =
         [ "Date,Open,High,Low,Close,Volume,Adj Close";
@@ -53,13 +54,37 @@ module ``about the stock example`` =
           "2012-03-02,32.31,32.44,32.00,32.08,47314200,32.08";
           "2012-03-01,31.93,32.39,31.85,32.29,77344100,32.29";
           "2012-02-29,31.89,32.00,31.61,31.74,59323600,31.74"; ]
+
+    let splitCommas (x:string) =
+             x.Split([|','|])
     
     // Feel free to add extra [<Koan>] members here to write
     // tests for yourself along the way. You can also try 
     // using the F# Interactive window to check your progress.
 
     [<Koan>]
+    let SplitTesT() =
+        let row = stockData.Head
+        let row_to_array = splitCommas row
+
+        AssertEquality row_to_array.Length 7
+
+    [<Koan>]
+    let StringToNum() = 
+        let to_be_float = "12.3"
+        let another_float = System.Double.Parse ("12.3", CultureInfo.InvariantCulture)
+
+        AssertEquality (float to_be_float) 12.3     
+        AssertEquality another_float 12.3
+
+    [<Koan>]
     let YouGotTheAnswerCorrect() =
-        let result =  __
-        
+        let row_with_answer = 
+            stockData
+            |> List.skip 1
+            |> List.map splitCommas
+            |> List.maxBy (fun row -> abs(float row.[4] - float row.[1]))
+            
+        let result = row_with_answer.[0]
+
         AssertEquality "2012-03-13" result
